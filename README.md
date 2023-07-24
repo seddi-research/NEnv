@@ -1,7 +1,7 @@
 # NEnv: Neural Environment Maps for Global Illumination
 Official repository of "NEnv: Neural Environment Maps for Global Illumination"
 
-_Carlos Rodriguez-Pardo*, Javier Fabre*, Elena Garces, Jorge Lopez-Moreno_
+_[Carlos Rodriguez-Pardo*](https://carlosrodriguezpardo.es/), [Javier Fabre*](http://javierfabre.com/), [Elena Garces](https://www.elenagarces.es/), [Jorge Lopez-Moreno](http://www.jorg3.com/)_
 
 Computer Graphics Forum (Proceedings of the Eurographics Symposium on Rendering), June 2023
 
@@ -19,9 +19,10 @@ We introduce NEnv, an invertible and fully differentiable neural method which ac
 ## Usage
 
 ## Dataset
+Please visit the [official website](http://mslab.es/projects/NEnv) to find the dataset of pre-trained models. 
 
 ## Coming Soon
-We will release training codes soon. Stay tuned for updates. 
+We will release training code and a _PyPI_ package soon. Stay tuned for updates. 
 
 ## Citation
 
