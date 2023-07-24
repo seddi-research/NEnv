@@ -43,7 +43,7 @@ DOI = {10.1111/cgf.14883}
 }
 ```
 
-### Acknowledgements
+## Acknowledgements
 
 Our implementation is based on [Neural Spline Flows](https://github.com/bayesiains/nsf). 
 
