@@ -1,0 +1,9 @@
+opencv-python==4.5.3.56
+numpy==1.21.5
+kornia==0.6.1
+wandb==0.12.17
+tqdm==4.46.0
+einops==0.6.0
+scipy==1.7.3
+torch==1.12.1
+torch==0.13.1
