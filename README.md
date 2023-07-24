@@ -19,7 +19,7 @@ Please use pip to install the required packages.
 ``` pip install -r requirements.txt ```
 
 ## Usage
-To evaluate or sample from a pre-trained normalizing flow, please see an example in ´´´NEnv/Scripts/eval_flow.py´´´ . Just change the ´´´path´´´ to your desired pre-trained flow. 
+To evaluate or sample from a pre-trained normalizing flow, please see an example in ``` NEnv/Scripts/eval_flow.py ``` . Just change the ``` path ``` to your desired pre-trained flow. 
 
 ## Dataset
 Please visit the [official website](http://mslab.es/projects/NEnv) to find the dataset of pre-trained models. 
