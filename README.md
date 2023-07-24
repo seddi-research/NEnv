@@ -15,6 +15,8 @@ We introduce NEnv, an invertible and fully differentiable neural method which ac
 
 
 ## Requirements
+Please use pip to install the required packages.
+``` pip install -r requirements.txt ```
 
 ## Usage
 
