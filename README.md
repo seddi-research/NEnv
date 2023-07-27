@@ -24,8 +24,12 @@ To evaluate or sample from a pre-trained normalizing flow, please see an example
 ## Dataset
 Please visit the [official website](http://mslab.es/projects/NEnv) to find the dataset of pre-trained models. 
 
-## Coming Soon
-We will release training code and a _PyPI_ package soon. Stay tuned for updates. 
+## Coming Soon 
+In planned release order: 
+- Improved evaluation scripts
+- Pre-processing algorithms
+- Training codes
+- PyPI package
 
 ## Citation
 
