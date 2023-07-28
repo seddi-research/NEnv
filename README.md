@@ -9,6 +9,9 @@ Computer Graphics Forum (Proceedings of the Eurographics Symposium on Rendering)
 
 ### [Paper Link](https://carlosrodriguezpardo.es/projects/NEnv/assets/pdf/paper.pdf)
 
+### [Dataset and Interactive Website](https://javierfabre.com/nenv/)
+
+
 ![teaser](https://carlosrodriguezpardo.es/projects/NEnv/assets/media/teaser_nenv.svg)
 We introduce NEnv, an invertible and fully differentiable neural method which achieves high-quality reconstructions for environment maps and their probability distributions. NEnv is up to two orders of magnitude faster to sample from than analytical alternatives, providing fast and accurate lighting representations for global illumination using Multiple Importance Sampling. Our models can accurately represent both indoor and outdoor illumination, achieving higher generality than previous work on environment map approximations.
 
