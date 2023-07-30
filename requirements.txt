@@ -6,4 +6,4 @@ tqdm==4.46.0
 einops==0.6.0
 scipy==1.7.3
 torch==1.12.1
-torch==0.13.1
+torch==1.13.1
