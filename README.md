@@ -23,7 +23,9 @@ Please use pip to install the required packages.
 
 ## Usage
 To evaluate or sample from a pre-trained normalizing flow, please see an example in ``` NEnv/Scripts/eval_flow.py ``` or ``` NEnv/Scripts/eval_compression.py ```. Just change the ``` path ``` to your desired pre-trained flow. 
+
 To train a flow from an input environment map, please follow  ``` NEnv/Scripts/train_nenv.py ```.
+
 To train a compression_model from an input environment map, please follow  ``` NEnv/Scripts/train_nenv_compression.py ```.
 
 
