@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings("ignore")
 from NEnv.Architectures.SIREN import Siren
 import matplotlib.pyplot as plt
-from tqdm.autonotebook import tqdm
+from tqdm import tqdm
 
 
 from NEnv.Utils.utils import get_gt_image, sample_rgb, get_predicted_image, get_gt_image

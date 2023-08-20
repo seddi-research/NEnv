@@ -18,6 +18,8 @@ sys.path.append(directory.parent.parent.parent)
 import numpy as np
 import torch
 from torchvision import transforms
+from tqdm import tqdm
+
 
 scaler = torch.cuda.amp.GradScaler()
 import warnings
