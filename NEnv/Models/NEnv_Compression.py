@@ -8,7 +8,6 @@ import numpy as np
 import torch
 from torch.optim.lr_scheduler import StepLR
 
-
 scaler = torch.cuda.amp.GradScaler()
 import warnings
 

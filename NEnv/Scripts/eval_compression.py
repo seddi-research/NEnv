@@ -2,10 +2,7 @@ import os
 import sys
 from os import path
 
-import numpy as np
 import torch
-
-from os import path
 
 # directory reach
 directory = path.path(__file__).abspath()
@@ -26,7 +23,7 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 # For example: path =r"/skylit_garage_4k/network-c.nenv"
 # You can download trained models from https://javierfabre.com/nenv/
 
-path = ""nenv = NEnv_Compression('', load_envmap=False)
+path = nenv = NEnv_Compression('', load_envmap=False)
 
 nenv.load(path)
 

@@ -5,8 +5,6 @@ from os import path
 import numpy as np
 import torch
 
-from os import path
-
 # directory reach
 directory = path.path(__file__).abspath()
 
