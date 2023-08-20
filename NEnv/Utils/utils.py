@@ -310,3 +310,14 @@ def get_predicted_pdf_rectangular(flow, device, number_of_points=500):
     probabilities_pred = np.exp(log_density_np).reshape(grid_dataset.X.shape)
     probabilities_pred = probabilities_pred.T
     return probabilities_pred
+
+def samplemany(envmap, N):
+    uniform_samples =np.random.uniform(low=0, high=1, size=(N,2))
+    samples = []
+    for s in range(N):
+        uniform_sample = uniform_samples[s]
+        envmap_sample0, envmap_sample1 = envmap.SampleSphericalSimple(uniform_sample)
+        x = (envmap_sample1 / np.pi * 0.5)
+        y = (envmap_sample0 / np.pi)
+        samples.append((y,x))
+    return np.array(samples)
