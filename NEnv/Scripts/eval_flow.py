@@ -46,7 +46,7 @@ device = torch.device('cuda')
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 # CHANGE THE PATH TO THE DESIRED .NENV file
-# For example: path =r"/skylit_garage_4k/network-f.nenv"
+# For example: path =r"/skylit_garage_4k/network-f.pth"
 # You can download trained models from https://javierfabre.com/nenv/
 
 path = ""
