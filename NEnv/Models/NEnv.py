@@ -32,7 +32,7 @@ from nsf.nde.distributions.uniform import TweakedUniform
 
 from nsf.nde.distributions.normal import StandardNormal
 
-from NEnv.Utils.utils import get_pdf_environment_map, get_predicted_pdf, samplemany
+from NEnv.Utils.utils import KL, get_pdf_environment_map, get_predicted_pdf, samplemany
 from NEnv.Utils.EnvironmentMap import Envmap
 
 TMP_DIR = "nenv/"
