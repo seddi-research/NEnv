@@ -5,6 +5,8 @@ from os import path
 import numpy as np
 import torch
 
+from os import path
+
 # directory reach
 directory = path.path(__file__).abspath()
 
@@ -46,6 +48,9 @@ device = torch.device('cuda')
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 # CHANGE THE PATH TO THE DESIRED .NENV file
+# For example: path =r"/skylit_garage_4k/network-f.nenv"
+# You can download trained models from https://javierfabre.com/nenv/
+
 path = ""
 nenv = NEnv('', load_envmap=False)
 
