@@ -30,11 +30,9 @@ nenv.load(path)
 # Load model
 model = nenv.define_model(nenv._model_path).half().eval()
 
-
 # For RGB evaluation at position x,y:
 x = 0.01
 y = 0.86
 
 xy = torch.tensor([x, y]).float().unsqueeze(0).to(device)
 rgb = model(xy)
-

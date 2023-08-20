@@ -1,9 +1,9 @@
 import argparse
+import warnings
 
 import wandb
 
 from NEnv.Models.NEnv import NEnv
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -16,15 +16,12 @@ def _parse_args():
 def main():
     arguments = _parse_args()
 
-
-    run = wandb.init(project='NEnv', job_type="training", notes="NEnv",config={})
-
+    run = wandb.init(project='NEnv', job_type="training", notes="NEnv", config={})
 
     # Change this to the path of the envmap you want to train a nenv with
     path_env = r"whale_skeleton_4k.hdr"
 
-
-    nenv = NEnv(path_hdr = path_env,
+    nenv = NEnv(path_hdr=path_env,
                 wandb_run=run,
                 target_resolution=(4000, 2000),
                 depth=2,
