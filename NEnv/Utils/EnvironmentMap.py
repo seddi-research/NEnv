@@ -1,5 +1,16 @@
 import os
 
+import sys
+from os import path
+
+# directory reach
+directory = path.path(__file__).abspath()
+
+# Allowing imports for parent classes
+sys.path.append(directory.parent)
+sys.path.append(directory.parent.parent)
+sys.path.append(directory.parent.parent.parent)
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np

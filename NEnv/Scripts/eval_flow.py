@@ -3,6 +3,18 @@ import os
 import numpy as np
 import torch
 
+import sys
+from os import path
+
+# directory reach
+directory = path.path(__file__).abspath()
+
+# Allowing imports for parent classes
+sys.path.append(directory.parent)
+sys.path.append(directory.parent.parent)
+sys.path.append(directory.parent.parent.parent)
+
+
 from NEnv.Models.NEnv import NEnv
 from nsf import nn as nn_
 from nsf import utils

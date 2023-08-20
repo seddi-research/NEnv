@@ -2,6 +2,16 @@ import bisect as bi
 
 from NEnv.Utils.utils import clamp
 
+import sys
+from os import path
+
+# directory reach
+directory = path.path(__file__).abspath()
+
+# Allowing imports for parent classes
+sys.path.append(directory.parent)
+sys.path.append(directory.parent.parent)
+sys.path.append(directory.parent.parent.parent)
 
 class Distribution1D:
     def __init__(self, f):

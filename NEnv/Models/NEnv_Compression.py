@@ -12,9 +12,13 @@ import warnings
 
 warnings.filterwarnings("ignore")
 from NEnv.Architectures.SIREN import Siren
+import matplotlib.pyplot as plt
+from tqdm.autonotebook import tqdm
 
-from NEnv.Utils.utils import get_gt_image
+
+from NEnv.Utils.utils import get_gt_image, sample_rgb, get_predicted_image, get_gt_image
 from NEnv.Utils.EnvironmentMap import Envmap
+
 
 TMP_DIR = "nenv/"
 
@@ -132,6 +136,107 @@ class NEnv_Compression():
     @property
     def class_name(self):
         return self.__class__.__name__
+
+    def compute(self, pre_trained_network=None):
+        """
+        Compute the feature: Create network, dataloader, normalization parameters and train network.
+        """
+        model = self.define_model(pre_trained_network=pre_trained_network).cuda()
+
+        self._model = self.train(
+            model=model,
+            model_name=self._model_name,
+            iterations_val=self._iterations_val,
+        )
+        self.clean_up()
+
+    def train(self, model,
+              model_name,
+              iterations_val):
+
+
+
+        if not self.wandb_run:
+            import wandb
+            self.wandb_run = wandb.init(project='NEnv',
+                                        config=self.training_hyperparameters_for_wandb,
+                                        job_type="train_compression")
+
+
+        pbar = tqdm(total=self._epochs)
+        self.losses_train = []
+
+        optimizer = torch.optim.Adam(model.parameters(), lr=self._lr)
+        optimizer.param_groups[0]['capturable'] = True
+        scheduler = StepLR(optimizer, step_size=self._step_size_scheduler, gamma=0.5, verbose=False)
+
+        self.set_model_path(model_name)
+        best_loss = 10e10
+
+        best_model = None
+
+        if self._loss_function == 'L1':
+            criterion = torch.nn.L1Loss()
+        elif self._loss_function == 'L2':
+            criterion = torch.nn.MSELoss()
+        else:
+            raise Exception('Loss function ' + str(self._loss_function) + ' not implemented')
+
+        for epoch in range(self._epochs):
+            model.train()
+            optimizer.zero_grad()
+
+            directions, rgbs = sample_rgb(self.envmap, self._batch_size, self._proportional)
+
+            directions = torch.tensor(directions).float().cuda()
+
+            target_rgb = torch.tensor(rgbs).float().cuda()
+
+            predictions = model(directions)
+
+            loss = criterion(target_rgb, predictions)
+            loss.backward(retain_graph=False)
+            torch.nn.utils.clip_grad_norm(model.parameters(), 50)
+
+            optimizer.step()
+            scheduler.step()
+
+            self.wandb_run.log({
+                'train_loss': loss.detach().cpu().numpy().item(),
+                "epoch": epoch
+            },  step=epoch)
+
+            if epoch % iterations_val == 0:
+                model.eval()
+                pred_image = get_predicted_image(model, device=self._device,)
+
+                image_comparison = np.concatenate((self._gt_im ,pred_image), axis=1) ** (1/self._gamma)
+
+                plt.figure(figsize=(20, 10))
+                plt.imshow(image_comparison, interpolation='nearest', aspect='auto')
+                plt.show()
+
+                if best_loss > loss.detach().cpu().numpy().item():
+                    best_loss = loss.detach().cpu().numpy().item()
+                    best_model = model
+                    torch.save(best_model.float().state_dict(), self._model_path)
+                    print('Loss in validation set improved at iteration ' + str(epoch) + ', saving model, ' + str(
+                        best_loss))
+
+                print('iter %s:' % epoch, 'loss = %.3f' % loss.detach().cpu().numpy().item(), 'Loss = %.3f' % loss, 'best Loss = %.3f' % best_loss)
+
+                self.wandb_run.log({ "Loss": loss.detach().cpu().numpy().item(),
+                                    "Best_Loss": best_loss,
+                                    "epoch": epoch},
+                                   step=epoch
+                                   )
+
+            pbar.update(1)
+
+        torch.save(best_model.float().state_dict(), self._model_path)
+        self._model = self.define_model(self._model_path)
+        print("Training finished :) ")
+        return model
 
     def export(self, output_path):
         """

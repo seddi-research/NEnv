@@ -4,6 +4,17 @@ import os
 import shutil
 import time
 
+import sys
+from os import path
+
+# directory reach
+directory = path.path(__file__).abspath()
+
+# Allowing imports for parent classes
+sys.path.append(directory.parent)
+sys.path.append(directory.parent.parent)
+sys.path.append(directory.parent.parent.parent)
+
 import numpy as np
 import torch
 from torchvision import transforms
@@ -58,6 +69,7 @@ class NEnv():
                  bins=128,
                  model_name='Spline',
                  epochs=10000,
+                 step_size = 2500,
                  prior='Uniform',
                  batch_norm=True,
                  iterations_val=20,
@@ -111,6 +123,7 @@ class NEnv():
         self._prior = prior
         self._batch_norm = batch_norm
         self._iterations_val = iterations_val
+        self._step_size = step_size
         self.wandb_run = wandb_run
 
         self._model_name = model_name
@@ -273,6 +286,109 @@ class NEnv():
         """
         self._model_path = model_path
 
+    def compute(self, pre_trained_network=None):
+        """
+        Compute the feature: Create network, dataloader, normalization parameters and train network.
+        """
+        model = self.define_model(pre_trained_network=pre_trained_network).cuda()
+
+        self._model = self.train(
+            model=model,
+            model_name=self._model_name,
+            iterations_val=self._iterations_val,
+        )
+        self.clean_up()
+
+    def train(self, model,
+              model_name,
+              iterations_val):
+
+
+
+        if not self.wandb_run:
+            import wandb
+            self.wandb_run = wandb.init(project='NEnv',
+                                        config=self.training_hyperparameters_for_wandb,
+                                        job_type="train")
+
+
+        pbar = tqdm(total=self._epochs)
+        self.losses_train = []
+        self.losses_val = []
+
+        optimizer = torch.optim.Adam(model.parameters(), lr=self._lr)
+        optimizer.param_groups[0]['capturable'] = True
+        scheduler = StepLR(optimizer, step_size=self._step_size, gamma=0.5, verbose=False)
+
+        self.set_model_path(model_name)
+        best_loss = 10e10
+        best_time = 10e10
+        best_model = None
+        for epoch in range(self._epochs):
+            model.train()
+            optimizer.zero_grad()
+            real_samples = np.nan_to_num(samplemany(self.envmap, self._batch_size), nan=0.0, posinf=0.0, neginf=0.0, )
+            loss = -torch.nan_to_num(model.log_prob(torch.tensor(real_samples).float().cuda()).mean(), nan=-1000.0, posinf=-1000.0, neginf=-1000.0,)
+            loss.backward(retain_graph=False)
+            torch.nn.utils.clip_grad_norm(model.parameters(), 1)
+            optimizer.step()
+
+            self.wandb_run.log({
+                'train_loss': loss.detach().cpu().numpy(),
+                "epoch": epoch
+            },  step=epoch)
+
+            if epoch % iterations_val == 0:
+                model.eval()
+
+
+                start = torch.cuda.Event(enable_timing=True)
+                end = torch.cuda.Event(enable_timing=True)
+
+                start.record()
+                pred_pdf = get_predicted_pdf(model, device=self._device)
+                end.record()
+
+                # Waits for everything to finish running
+                torch.cuda.synchronize()
+
+                time = (start.elapsed_time(end))
+
+                kl_div = np.log(KL(self._gt_pdf.flatten(), pred_pdf.flatten()))
+
+
+                if best_loss  > loss.detach().cpu().numpy():
+                    best_loss = loss.detach().cpu().numpy()
+                    best_model = model
+                    torch.save(best_model.float().state_dict(), self._model_path)
+                    print('Loss in validation set improved at iteration ' + str(epoch) + ', saving model, ' + str(
+                        best_loss))
+
+                if best_time > time:
+                    best_time = time
+
+
+
+                print('iter %s:' % epoch, 'loss = %.3f' % loss, 'kl divergence (NATS) = %.3f' % kl_div, 'best loss = %.3f' % best_loss)
+
+                self.wandb_run.log({ "KL_Divergence": kl_div,
+                                    "LL": loss.detach().cpu().numpy(),
+                                    "Best_Loss": best_loss,
+                                    "epoch": epoch,
+                                     "time": time,
+                                     "best_time": best_time},
+                                   step=epoch
+                                   )
+
+            pbar.update(1)
+            scheduler.step()
+
+        torch.save(best_model.float().state_dict(), self._model_path)
+        self._model = self.define_model(self._model_path)
+        print("Training finished :) ")
+        return model
+
+
     def clean_up(self):
         """
         Method that cleans CUDA memory after execution.
@@ -322,6 +438,7 @@ class NEnv():
             "depth": self._depth,
             "width": self._width,
             "model_name": self._model_name,
+            "step_size": self._step_size,
             "bins": self._bins,
             "prior": self._prior,
             "model_path": flow_network_path,
