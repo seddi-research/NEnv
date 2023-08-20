@@ -2,9 +2,8 @@ import datetime
 import json
 import os
 import shutil
-import time
-
 import sys
+import time
 from os import path
 
 # directory reach
@@ -19,7 +18,6 @@ import numpy as np
 import torch
 from torchvision import transforms
 from tqdm import tqdm
-
 
 scaler = torch.cuda.amp.GradScaler()
 import warnings
@@ -71,7 +69,7 @@ class NEnv():
                  bins=128,
                  model_name='Spline',
                  epochs=10000,
-                 step_size = 2500,
+                 step_size=2500,
                  prior='Uniform',
                  batch_norm=True,
                  iterations_val=20,
@@ -305,14 +303,11 @@ class NEnv():
               model_name,
               iterations_val):
 
-
-
         if not self.wandb_run:
             import wandb
             self.wandb_run = wandb.init(project='NEnv',
                                         config=self.training_hyperparameters_for_wandb,
                                         job_type="train")
-
 
         pbar = tqdm(total=self._epochs)
         self.losses_train = []
@@ -330,7 +325,8 @@ class NEnv():
             model.train()
             optimizer.zero_grad()
             real_samples = np.nan_to_num(samplemany(self.envmap, self._batch_size), nan=0.0, posinf=0.0, neginf=0.0, )
-            loss = -torch.nan_to_num(model.log_prob(torch.tensor(real_samples).float().cuda()).mean(), nan=-1000.0, posinf=-1000.0, neginf=-1000.0,)
+            loss = -torch.nan_to_num(model.log_prob(torch.tensor(real_samples).float().cuda()).mean(), nan=-1000.0,
+                                     posinf=-1000.0, neginf=-1000.0, )
             loss.backward(retain_graph=False)
             torch.nn.utils.clip_grad_norm(model.parameters(), 1)
             optimizer.step()
@@ -338,11 +334,10 @@ class NEnv():
             self.wandb_run.log({
                 'train_loss': loss.detach().cpu().numpy(),
                 "epoch": epoch
-            },  step=epoch)
+            }, step=epoch)
 
             if epoch % iterations_val == 0:
                 model.eval()
-
 
                 start = torch.cuda.Event(enable_timing=True)
                 end = torch.cuda.Event(enable_timing=True)
@@ -358,8 +353,7 @@ class NEnv():
 
                 kl_div = np.log(KL(self._gt_pdf.flatten(), pred_pdf.flatten()))
 
-
-                if best_loss  > loss.detach().cpu().numpy():
+                if best_loss > loss.detach().cpu().numpy():
                     best_loss = loss.detach().cpu().numpy()
                     best_model = model
                     torch.save(best_model.float().state_dict(), self._model_path)
@@ -369,16 +363,15 @@ class NEnv():
                 if best_time > time:
                     best_time = time
 
+                print('iter %s:' % epoch, 'loss = %.3f' % loss, 'kl divergence (NATS) = %.3f' % kl_div,
+                      'best loss = %.3f' % best_loss)
 
-
-                print('iter %s:' % epoch, 'loss = %.3f' % loss, 'kl divergence (NATS) = %.3f' % kl_div, 'best loss = %.3f' % best_loss)
-
-                self.wandb_run.log({ "KL_Divergence": kl_div,
+                self.wandb_run.log({"KL_Divergence": kl_div,
                                     "LL": loss.detach().cpu().numpy(),
                                     "Best_Loss": best_loss,
                                     "epoch": epoch,
-                                     "time": time,
-                                     "best_time": best_time},
+                                    "time": time,
+                                    "best_time": best_time},
                                    step=epoch
                                    )
 
@@ -389,7 +382,6 @@ class NEnv():
         self._model = self.define_model(self._model_path)
         print("Training finished :) ")
         return model
-
 
     def clean_up(self):
         """

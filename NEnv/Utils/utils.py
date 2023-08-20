@@ -1,9 +1,9 @@
+import sys
+from os import path
+
 import numpy as np
 from scipy.special import rel_entr
 from torch.utils import data
-
-import sys
-from os import path
 
 # directory reach
 directory = path.path(__file__).abspath()
@@ -15,7 +15,6 @@ sys.path.append(directory.parent.parent.parent)
 
 from nsf import data as data_
 from nsf import utils
-
 
 
 def luminance(R, G, B):
@@ -120,7 +119,7 @@ def get_gt_image(envmap, number_of_points=512):
     return rgbs_np_gt
 
 
-def get_predicted_pdf(flow, device, number_of_points = 500):
+def get_predicted_pdf(flow, device, number_of_points=500):
     num_points_per_axis = number_of_points
     bounds = np.array([
         [1e-3, 1 - 1e-3],
@@ -148,7 +147,8 @@ def get_predicted_pdf(flow, device, number_of_points = 500):
     probabilities_pred = probabilities_pred.T
     return probabilities_pred
 
-def get_predicted_image(model, device, number_of_points = 512):
+
+def get_predicted_image(model, device, number_of_points=512):
     num_points_per_axis = number_of_points
     bounds = np.array([
         [1e-3, 1 - 1e-3],
@@ -180,7 +180,8 @@ def get_predicted_image(model, device, number_of_points = 512):
     rgbs_np = rgbs_np.T
     return rgbs_np.transpose((1, -1, 0))
 
-def get_predicted_image_rectangular(model, device, number_of_points = (1920, 1080)):
+
+def get_predicted_image_rectangular(model, device, number_of_points=(1920, 1080)):
     num_points_per_axis = number_of_points
     bounds = np.array([
         [1e-3, 1 - 1e-3],
@@ -213,7 +214,8 @@ def get_predicted_image_rectangular(model, device, number_of_points = (1920, 108
     rgbs_np = rgbs_np.T
     return rgbs_np.transpose((1, -1, 0))
 
-def get_pdf_environment_map_rectangular(envmap, number_of_points = (2000,1000)):
+
+def get_pdf_environment_map_rectangular(envmap, number_of_points=(2000, 1000)):
     num_points_per_axis = number_of_points
     bounds = np.array([
         [1e-5, 1 - 1e-5],
@@ -244,6 +246,7 @@ def get_pdf_environment_map_rectangular(envmap, number_of_points = (2000,1000)):
     probabilities_gt = np.flip(probabilities, 1)
     return probabilities_gt
 
+
 def sample_rgb(envmap, N, proportional=False):
     """
 
@@ -253,7 +256,7 @@ def sample_rgb(envmap, N, proportional=False):
     :return: samples in a numpy array
     """
     assert isinstance(N, int)
-    uniform_samples =np.random.uniform(low=0, high=1, size=(N,2))
+    uniform_samples = np.random.uniform(low=0, high=1, size=(N, 2))
     samples = []
     rgbs = []
 
@@ -278,7 +281,8 @@ def sample_rgb(envmap, N, proportional=False):
 
     return np.array(samples), np.array(rgbs)
 
-def get_predicted_pdf_rectangular(flow, device, number_of_points = 500):
+
+def get_predicted_pdf_rectangular(flow, device, number_of_points=500):
     num_points_per_axis = number_of_points
     bounds = np.array([
         [1e-5, 1 - 1e-5],

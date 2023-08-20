@@ -1,9 +1,8 @@
 import bisect as bi
-
-from NEnv.Utils.utils import clamp
-
 import sys
 from os import path
+
+from NEnv.Utils.utils import clamp
 
 # directory reach
 directory = path.path(__file__).abspath()
@@ -12,6 +11,7 @@ directory = path.path(__file__).abspath()
 sys.path.append(directory.parent)
 sys.path.append(directory.parent.parent)
 sys.path.append(directory.parent.parent.parent)
+
 
 class Distribution1D:
     def __init__(self, f):
